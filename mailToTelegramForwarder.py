@@ -521,7 +521,8 @@ class Mail:
         """
         get UID of most recent mail
         """
-        rv, data = self.mailbox.uid('search', '', 'UID *')
+        rv, data = self.mailbox.select(config.imap_folder)
+        rv, data = self.mailbox.uid('search', None, 'UID *')
         if rv != 'OK':
             logging.info("No messages found!")
             return ''
@@ -676,7 +677,8 @@ class Mail:
             return
 
         try:
-            rv, data = self.mailbox.uid('search', '', search_string)
+            rv, data = self.mailbox.select(self.config.imap_folder)
+            rv, data = self.mailbox.uid('search', None, search_string)
             if rv != 'OK':
                 logging.info("No messages found!")
                 return
@@ -695,6 +697,7 @@ class Mail:
 
             if current_uid > max_num:
                 try:
+                    rv, data = self.mailbox.select(self.config.imap_folder)
                     rv, data = self.mailbox.uid('fetch', num, '(RFC822)')
                     if rv != 'OK':
                         logging.error("ERROR getting message", num)
